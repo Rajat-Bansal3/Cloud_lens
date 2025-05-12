@@ -1,0 +1,11 @@
+import matplotlib.pyplot as plt
+
+models = ['LogReg', 'SVM', 'RF', 'BERT']
+f1_scores = [0.83, 0.86, 0.84, 0.91]
+
+plt.bar(models, f1_scores, color='skyblue')
+plt.title('F1-Score Comparison Across Models')
+plt.ylabel('F1-Score')
+plt.ylim(0.7, 1.0)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()

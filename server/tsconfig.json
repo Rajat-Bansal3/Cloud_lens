@@ -3,7 +3,7 @@
     "target": "ES2024",
     "module": "ES2022",
     "moduleResolution": "Bundler",
-    "rootDir": "./src",
+    "rootDir": "master/src",
     "outDir": "./dist",
     "baseUrl": ".",
 
@@ -32,6 +32,6 @@
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["master/src/**/*"],
   "exclude": ["node_modules", "dist", "coverage"]
 }
