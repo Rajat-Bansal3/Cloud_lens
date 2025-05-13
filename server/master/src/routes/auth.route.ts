@@ -13,6 +13,8 @@ import crypto from "crypto";
 import env from "src/env";
 import { checkDatabaseConnection } from "src/lib/db";
 import { stateMap } from "src/lib/constants";
+import bcrypt from "bcryptjs";
+import { authenticate } from "src/middleware/access-control";
 
 const router = Router();
 
@@ -25,11 +27,9 @@ router.post(
     };
 
     const user = await User.findOne({ email: email.toLowerCase() });
-
     const comp =
       user?.password ||
       (await hashString(crypto.randomBytes(16).toString("hex")));
-
     const valid = await verifyHash(password, comp);
     if (!user?._id || !valid) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -158,6 +158,7 @@ router.post(
 );
 router.post(
   "/verify-email",
+  authenticate,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.userId;
     const user = await User.findById(id);
@@ -182,6 +183,7 @@ router.post(
 );
 router.post(
   "/verify",
+  authenticate,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { OTP } = req.body as { OTP: string };
     const id = req.userId;
@@ -204,7 +206,9 @@ router.post(
 );
 router.post(
   "/sign-out",
+  authenticate,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.userId);
     await RefreshToken.updateMany(
       {
         userId: req.userId,
@@ -223,15 +227,16 @@ router.post(
       ...cookie_options,
       path: "/auth/refresh",
     });
-    return res.status(204);
+    return res.status(204).json({ message: "tokens cleared" });
   })
 );
 router.post(
   "/refresh",
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {})
-);
-router.post(
+); //TODO : implement this function
+router.get(
   "/me",
+  authenticate,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.userId;
     const user = await User.findById(id)
